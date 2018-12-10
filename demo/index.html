@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>px适配demo</title>
+        <meta name="viewport"  content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1"/>
+        <script src="/index.js"></script>
+        <script>
+            // 以375设计稿适配
+            window.Adapter.setAdapterDesign({
+                width: 375
+            });
+        </script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+
+
+            html {
+                height: 100%;
+                background-image: url('./loading.gif');
+                background-repeat: no-repeat;
+                background-position: center center;
+            }
+
+            body {
+                display: none;
+            }
+
+            html.adapter-complete {
+                background-image: none;
+            }
+
+            html.adapter-complete body {
+                display: block;
+            }
+
+            /* img {
+                width: 120px;
+            } */
+
+            .box {
+                width: 186px;
+                height: 40px;
+                background-color: red;
+                font-size: 14px;
+                color: #fff;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="box">
+            <span>屏幕一半的宽度</span>
+        </div>
+    </body>
+</html>

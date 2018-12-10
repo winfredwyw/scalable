@@ -1,0 +1,31 @@
+{
+  "name": "scalable-adapter",
+  "version": "1.0.0",
+  "description": "scalable mobile web adaptation solution",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --color --config ./webpack.config.js",
+    "postpublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/winfredwyw/scalable.git"
+  },
+  "keywords": [
+    "adapter",
+    "html5",
+    "wap",
+    "hybrid"
+  ],
+  "author": "winfred4633@163.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/winfredwyw/scalable/issues"
+  },
+  "homepage": "https://github.com/winfredwyw/scalable#readme",
+  "devDependencies": {
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
+  }
+}
