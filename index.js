@@ -86,7 +86,7 @@
             }, function () {
                 setTimeout(function () {
                     PxScalable.setViewport();
-                }, 0);
+                }, 50);
             })
         }
     };
@@ -124,7 +124,7 @@
             });
 
             win.addEventListener("orientationchange", function (e) {
-                run()
+                Vars.stopResize = false;
             });
         }
     };
