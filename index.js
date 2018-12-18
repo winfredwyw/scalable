@@ -74,12 +74,14 @@
                 // temporarily stop listen resize
                 Vars.stopResize = true;
                 // go on listen resize
-                setTimeout(function () {
+                dyPx.timer = setTimeout(function () {
                     Vars.stopResize = false
-                }, 1000);
+                }, 2000);
             });
         },
         run: function () {
+            Vars.stopResize = true;
+
             Helpers.setViewport({
                 width: 'device-width',
                 scale: 1
@@ -119,11 +121,14 @@
 
             win.addEventListener("resize", function (e) {
                 if (!Vars.stopResize) {
+                    clearTimeout(dyPx.timer)
+                    Vars.stopResize = true;
                     run()
                 }
             });
 
             win.addEventListener("orientationchange", function (e) {
+                clearTimeout(dyPx.timer)
                 Vars.stopResize = false;
             });
         }
