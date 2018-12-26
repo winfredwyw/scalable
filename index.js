@@ -81,7 +81,6 @@
         },
         run: function () {
             Vars.stopResize = true;
-            clearTimeout(PxScalable.timer)
 
             Helpers.setViewport({
                 width: 'device-width',
@@ -133,16 +132,25 @@
 
             win.addEventListener("resize", function (e) {
                 if (!Vars.stopResize) {
+<<<<<<< HEAD
                     clearTimeout(PxScalable.timer)
+=======
+                    clearTimeout(dyPx.timer)
+>>>>>>> 0eb93113b19bbf36f2912975f5631544bd277392
                     Vars.stopResize = true;
                     run()
                 }
             });
 
             win.addEventListener("orientationchange", function (e) {
+<<<<<<< HEAD
                 clearTimeout(PxScalable.timer)
                 Vars.stopResize = true
                 run()
+=======
+                clearTimeout(dyPx.timer)
+                Vars.stopResize = false;
+>>>>>>> 0eb93113b19bbf36f2912975f5631544bd277392
             });
         }
     };
