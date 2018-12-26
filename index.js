@@ -60,6 +60,7 @@
 
     // scalable core
     var PxScalable = {
+        lastScale: 0,
         setViewport: function () {
             var width = document.documentElement.clientWidth;
             var scale = width / Vars.design.width;
@@ -69,24 +70,26 @@
                 scale: scale
             }, function () {
                 document.documentElement.setAttribute("class", Vars.adapterClass.adapterSuccess);
-                document.documentElement.setAttribute("style", Math.max(12 / scale, 12) + 'px');
+                document.documentElement.setAttribute("style", 'font-size:' + Math.max(12 / scale, 12) + 'px');
+                PxScalable.lastScale = scale;
 
-                // temporarily stop listen resize
-                Vars.stopResize = true;
                 // go on listen resize
                 setTimeout(function () {
-                    Vars.stopResize = false
+                    // Vars.stopResize = false
                 }, 1000);
             });
         },
         run: function () {
+            Vars.stopResize = true;
+            clearTimeout(PxScalable.timer)
+
             Helpers.setViewport({
                 width: 'device-width',
                 scale: 1
             }, function () {
                 setTimeout(function () {
                     PxScalable.setViewport();
-                }, 0);
+                }, 50);
             })
         }
     };
@@ -94,36 +97,51 @@
     // adapter entrance
     var Adapter = {
         init: function () {
-            Adapter.runAdapter();
+            var vp = document.querySelectorAll('meta[name="viewport"]');
+            if (!vp || vp.length === 0) {
+                Adapter.initViewport();
+            }
             Adapter.bindEvent();
+        },
+        initViewport: function () {
+            Helpers.setViewport({
+                width: 'device-width',
+                scale: 1
+            });
         },
         setAdapterDesign: function (design) {
             if (!design) return;
 
-            Vars.design.width = design.width;
-            Vars.stopResize = false;
+            design.width && (Vars.design.width = design.width);
+            design.height && (Vars.design.height = design.height);
 
+            clearTimeout(PxScalable.timer)
             Adapter.runAdapter();
         },
         runAdapter: function () {
             PxScalable.run();
         },
         bindEvent: function () {
-            var run = Helpers.debounce(Adapter.runAdapter, 200);
+            var run = Helpers.debounce(Adapter.runAdapter, 300);
 
             win.addEventListener("pageshow", function (e) {
                 if (e.persisted) {
+                    clearTimeout(PxScalable.timer)
                     run()
                 }
             }, false);
 
             win.addEventListener("resize", function (e) {
                 if (!Vars.stopResize) {
+                    clearTimeout(PxScalable.timer)
+                    Vars.stopResize = true;
                     run()
                 }
             });
 
             win.addEventListener("orientationchange", function (e) {
+                clearTimeout(PxScalable.timer)
+                Vars.stopResize = true
                 run()
             });
         }
@@ -131,7 +149,7 @@
 
     Adapter.init();
 
-    window.Adapter = {
+    return win.Adapter = {
         setAdapterDesign: Adapter.setAdapterDesign
     };
 })(window);
