@@ -4,22 +4,20 @@
         // set viewport by config
         setViewport: function (config, callback) {
             var vps = document.querySelectorAll('meta[name="viewport"]');
+            var content = 'width=' + config.width +
+            ', initial-scale=' + config.scale +
+            ', maximum-scale=' + config.scale +
+            ', minimum-scale=' + config.scale +
+            ', user-scalable=no, viewport-fit=cover';
         
             if (vps.length > 0) {
                 vps[0].parentNode.removeChild(vps[0]);
+                // vps[vps.length - 1].setAttribute('content', content);
             }
 
             var vp = document.createElement('meta');
                 vp.setAttribute('name', 'viewport');
-                vp.setAttribute('content', '');
-                vp.setAttribute(
-                    'content',
-                    'width=' + config.width +
-                    ',initial-scale=' + config.scale +
-                    ', maximum-scale=' + config.scale +
-                    ', minimum-scale=' + config.scale +
-                    ', user-scalable=no, viewport-fit=cover'
-                );
+                vp.setAttribute('content', content);
         
             if (document.documentElement.firstElementChild) {
                 document.documentElement.firstElementChild.appendChild(vp);
@@ -55,32 +53,44 @@
             adapterSuccess: 'adapter-complete',     // add adapter complete class
             adapterContain: 'adapter-content'       // fullscreen adapter (todo) container class
         },
-        stopResize: false                           // is stop to listen resize
+        stopResize: true                            // is stop to listen resize
+    };
+
+    // doms
+    var Doms = {
+        doc: win.document,
+        docElem: win.document.documentElement,
+        docHead: win.document.getElementsByTagName('head')[0]
     };
 
     // scalable core
     var PxScalable = {
         lastScale: 0,
         setViewport: function () {
-            var width = document.documentElement.clientWidth;
-            var scale = width / Vars.design.width;
+            setTimeout(function () {
+                var width = document.documentElement.clientWidth;
+                var scale = width / Vars.design.width;
 
-            Helpers.setViewport({
-                width: Vars.design.width,
-                scale: scale
-            }, function () {
-                document.documentElement.setAttribute("class", Vars.adapterClass.adapterSuccess);
-                document.documentElement.setAttribute("style", 'font-size:' + Math.max(12 / scale, 12) + 'px');
-                PxScalable.lastScale = scale;
-
-                // go on listen resize
-                setTimeout(function () {
-                    // Vars.stopResize = false
-                }, 1000);
-            });
+                Helpers.setViewport({
+                    width: Vars.design.width,
+                    scale: scale
+                }, function () {
+                    // 适配完成标识
+                    Doms.docElem.setAttribute("class", Vars.adapterClass.adapterSuccess);
+                    // 兼容老业务REM样式
+                    Doms.docElem.setAttribute("style", 'font-size: 37.5px');
+                    // 记录上次缩放值
+                    PxScalable.lastScale = scale;
+                    // 解除resize事件限制
+                    PxScalable.timer = setTimeout(function () {
+                        // Vars.stopResize = false
+                    }, 2000);
+                });
+            }, 27);
         },
         run: function () {
             Vars.stopResize = true;
+            clearTimeout(PxScalable.timer)
 
             Helpers.setViewport({
                 width: 'device-width',
@@ -123,9 +133,11 @@
         bindEvent: function () {
             var run = Helpers.debounce(Adapter.runAdapter, 300);
 
+            // 倒退 缓存相关
             win.addEventListener("pageshow", function (e) {
                 if (e.persisted) {
                     clearTimeout(PxScalable.timer)
+                    Vars.stopResize = true;
                     run()
                 }
             }, false);
@@ -138,6 +150,7 @@
                 }
             });
 
+            // 横竖屏切换
             win.addEventListener("orientationchange", function (e) {
                 clearTimeout(PxScalable.timer)
                 Vars.stopResize = true
