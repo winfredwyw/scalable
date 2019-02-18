@@ -38,3 +38,5 @@ window.Adapter.setAdapterDesign({
 ## ChangeLog
 
 - ### 1.0.0 第一版
+
+- ### 1.0.1 逻辑优化，解决已知问题
