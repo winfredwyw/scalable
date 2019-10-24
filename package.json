@@ -1,6 +1,6 @@
 {
   "name": "scalable-adapter",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "scalable mobile web adaptation solution",
   "main": "index.js",
   "scripts": {
